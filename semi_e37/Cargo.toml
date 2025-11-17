@@ -23,8 +23,7 @@ rust-version = "1.82"
 [dependencies]
 
 # semi_e5 is MIT
-semi_e5 = "0.2.0"
-#semi_e5 = {path = "../semi_e5"}
+semi_e5 = {path = "../semi_e5"}
 
 # atomic is MIT or Apache-2.0
 atomic = "0.6.0"

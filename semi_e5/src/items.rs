@@ -53,8 +53,56 @@
 
 use crate::Item;
 use crate::Error::{self, *};
-use std::ascii::Char;
 use num_enum::{IntoPrimitive, TryFromPrimitive};
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct Char(u8);
+
+/// Convert from u8 to Char (only accepts ASCII: 0-127)
+impl TryFrom<u8> for Char {
+    type Error = Error;
+
+    fn try_from(byte: u8) -> Result<Self, Self::Error> {
+        if byte.is_ascii() {
+            Ok(Char(byte))
+        } else {
+            Err(Error::WrongFormat)
+        }
+    }
+}
+
+/// Convert from char to Char (only accepts ASCII characters)
+impl TryFrom<char> for Char {
+    type Error = Error;
+
+    fn try_from(c: char) -> Result<Self, Self::Error> {
+        if c.is_ascii() {
+            Ok(Char(c as u8))
+        } else {
+            Err(Error::WrongFormat)
+        }
+    }
+}
+
+/// Convert from Char to u8 (infallible)
+impl From<Char> for u8 {
+    fn from(ch: Char) -> Self {
+        ch.0
+    }
+}
+
+/// Convert from Char to char (infallible)
+impl From<Char> for char {
+    fn from(ch: Char) -> Self {
+        ch.0 as char
+    }
+}
+
+pub fn str_to_chars(s: &str) -> Result<Vec<Char>, Error> {
+    s.chars()
+        .map(|c| Char::try_from(c))
+        .collect()
+}
 
 /// ## OPTIONAL ITEM
 /// 

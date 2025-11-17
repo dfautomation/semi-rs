@@ -74,8 +74,6 @@
 //! 
 //! [SECS-II]:  crate
 
-#![feature(ascii_char)]
-#![feature(ascii_char_variants)]
 #![allow(clippy::unusual_byte_groupings)]
 #![allow(clippy::collapsible_match)]
 #![allow(clippy::type_complexity)]
@@ -85,8 +83,8 @@ pub mod items;
 pub mod messages;
 pub mod units;
 
-use std::ascii::Char;
 use encoding::{all::ISO_2022_JP, Encoding};
+use items::{Char};
 
 /// ## GENERIC MESSAGE
 /// **Based on SEMI E5§6**
@@ -516,7 +514,7 @@ impl From<Item> for Vec<u8> {
         };
         //Vector
         for ascii in ascii_vec {
-          vec.push(ascii as u8);
+          vec.push(ascii.into());
         }
       },
       // JIS-8
@@ -813,7 +811,7 @@ impl TryFrom<Vec<u8>> for Item {
         // ASCII
         format::ASCII => {
           let mut vec: Vec<Char> = vec![];
-          for _ in 0..length {vec.push(Char::from_u8(*data.next()?)?);}
+          for _ in 0..length {vec.push((*data.next()?).try_into().ok()?);}
           Some(Item::Ascii(vec))
         },
         // JIS-8

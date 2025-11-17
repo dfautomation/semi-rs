@@ -21,7 +21,7 @@
 #![feature(ascii_char)]
 #![feature(ascii_char_variants)]
 
-use std::{ascii::Char::*, io::Error, sync::Arc, thread::{self, JoinHandle}, time::Duration};
+use std::{io::Error, sync::Arc, thread::{self, JoinHandle}, time::Duration};
 use semi_e5::{Item, Message, items::*, messages::*};
 use semi_e37::generic::{ConnectionMode, Client, MessageID, ParameterSettings};
 
