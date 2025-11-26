@@ -102,12 +102,13 @@ pub use crate::primitive::ConnectionMode;
 /// 
 /// [HSMS]:             crate
 /// [Generic Services]: crate::generic
+pub type Outbox = HashMap<u32, (MessageID, SendOnce<Option<Message>>)>;
 pub struct Client {
   parameter_settings: ParameterSettings,
   primitive_client: Arc<primitive::Client>,
   selection_state: Atomic<SelectionState>,
   selection_mutex: Mutex<()>,
-  outbox: Mutex<HashMap<u32, (MessageID, SendOnce<Option<Message>>)>>,
+  outbox: Mutex<Outbox>,
   system: Mutex<u32>,
 }
 
@@ -671,9 +672,9 @@ impl Client {
     outbox.deref_mut().remove(&system);
     match rx_result {
       // RX: Success
-      Ok(rx_message) => return Ok(rx_message),
+      Ok(rx_message) => Ok(rx_message),
       // RX: Failure
-      Err(_e) => return Ok(None),
+      Err(_e) => Ok(None),
     }
   }
 
@@ -733,7 +734,7 @@ impl Client {
     thread::spawn(move || {
       match clone.selection_state.load(Relaxed) {
         // IS: NOT SELECTED
-        SelectionState::NotSelected => return Err(Error::from(ErrorKind::AlreadyExists)),
+        SelectionState::NotSelected => Err(Error::from(ErrorKind::AlreadyExists)),
         // IS: SELECTED
         SelectionState::Selected => {
           // TX: Data Message
@@ -749,11 +750,11 @@ impl Client {
             Some(rx_message) => {
               match rx_message.contents {
                 // RX: Data
-                MessageContents::DataMessage(data_message) => return Ok(Some(data_message)),
+                MessageContents::DataMessage(data_message) => Ok(Some(data_message)),
                 // RX: Reject.req
-                MessageContents::RejectRequest(_type, _reason) => return Err(Error::from(ErrorKind::PermissionDenied)),
+                MessageContents::RejectRequest(_type, _reason) => Err(Error::from(ErrorKind::PermissionDenied)),
                 // RX: Unknown
-                _ => return Err(Error::from(ErrorKind::InvalidData)),
+                _ => Err(Error::from(ErrorKind::InvalidData)),
               }
             },
             // RX: No Response
@@ -767,7 +768,7 @@ impl Client {
               }
               // REPLY NOT EXPECTED
               else {
-                return Ok(None);
+                Ok(None)
               }
             },
           }

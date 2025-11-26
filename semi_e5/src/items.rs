@@ -100,7 +100,7 @@ impl From<Char> for char {
 
 pub fn str_to_chars(s: &str) -> Result<Vec<Char>, Error> {
     s.chars()
-        .map(|c| Char::try_from(c))
+        .map(Char::try_from)
         .collect()
 }
 
