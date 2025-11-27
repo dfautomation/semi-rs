@@ -55,8 +55,14 @@ use crate::Item;
 use crate::Error::{self, *};
 use num_enum::{IntoPrimitive, TryFromPrimitive};
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Char(u8);
+
+impl std::fmt::Debug for Char {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "'{}'", self.0 as char)
+    }
+}
 
 /// Convert from u8 to Char (only accepts ASCII: 0-127)
 impl TryFrom<u8> for Char {
