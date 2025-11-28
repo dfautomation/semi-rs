@@ -59,62 +59,71 @@ use num_enum::{IntoPrimitive, TryFromPrimitive};
 pub struct Char(u8);
 
 impl std::fmt::Debug for Char {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "'{}'", self.0 as char)
-    }
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    write!(f, "'{}'", self.0 as char)
+  }
 }
 
 /// Convert from u8 to Char (only accepts ASCII: 0-127)
 impl TryFrom<u8> for Char {
-    type Error = Error;
+  type Error = Error;
 
-    fn try_from(byte: u8) -> Result<Self, Self::Error> {
-        if byte.is_ascii() {
-            Ok(Char(byte))
-        } else {
-            Err(Error::WrongFormat)
-        }
+  fn try_from(byte: u8) -> Result<Self, Self::Error> {
+    if byte.is_ascii() {
+      Ok(Char(byte))
+    } else {
+      Err(Error::WrongFormat)
     }
+  }
 }
 
 /// Convert from char to Char (only accepts ASCII characters)
 impl TryFrom<char> for Char {
-    type Error = Error;
+  type Error = Error;
 
-    fn try_from(c: char) -> Result<Self, Self::Error> {
-        if c.is_ascii() {
-            Ok(Char(c as u8))
-        } else {
-            Err(Error::WrongFormat)
-        }
+  fn try_from(c: char) -> Result<Self, Self::Error> {
+    if c.is_ascii() {
+      Ok(Char(c as u8))
+    } else {
+      Err(Error::WrongFormat)
     }
+  }
 }
 
 /// Convert from Char to u8 (infallible)
 impl From<Char> for u8 {
-    fn from(ch: Char) -> Self {
-        ch.0
-    }
+  fn from(ch: Char) -> Self {
+    ch.0
+  }
 }
 
 /// Convert from Char to char (infallible)
 impl From<Char> for char {
-    fn from(ch: Char) -> Self {
-        ch.0 as char
-    }
+  fn from(ch: Char) -> Self {
+    ch.0 as char
+  }
 }
 
-pub fn str_to_chars(s: &str) -> Result<Vec<Char>, Error> {
+impl Char {
+  pub fn str_to_chars(s: &str) -> Result<Vec<Char>, Error> {
     s.chars()
-        .map(Char::try_from)
-        .collect()
-}
+      .map(Char::try_from)
+      .collect()
+  }
 
-/// Convert a string to a vector of Chars, replacing invalid ASCII with '?'
-pub fn safe_str_to_chars(s: &str) -> Vec<Char> {
+  /// Convert a string to a vector of Chars, replacing invalid ASCII with '?'
+  pub fn safe_str_to_chars(s: &str) -> Vec<Char> {
     s.chars()
-        .map(|c| Char::try_from(c).unwrap_or(Char(b'?')))
-        .collect()
+      .map(|c| Char::try_from(c).unwrap_or(Char(b'?')))
+      .collect()
+  }
+
+  /// Convert a vector of Chars to a String
+  pub fn chars_to_str(chars: &[Char]) -> String {
+    chars.iter()
+      .map(|&ch| char::from(ch))
+      .collect()
+  }
 }
 
 /// ## OPTIONAL ITEM
@@ -510,6 +519,52 @@ macro_rules! singleformat {
 ///    - read(&self) -> &Vec\<$type\>
 #[macro_export]
 macro_rules! singleformat_vec {
+  // Special case for Char type (with optional range) - includes Display trait
+  (
+    $name:ident,
+    $format:ident
+    $(, $range:expr)?,
+    Char
+  ) => {
+    $(impl $name {
+      pub fn new(vec: Vec<Char>) -> Option<Self> {
+        if $range.contains(&vec.len()) {
+          Some(Self(vec))
+        } else {
+          None
+        }
+      }
+      pub fn read(&self) -> &Vec<Char> {
+        &self.0
+      }
+    })?
+    impl From<$name> for Item {
+      fn from(value: $name) -> Item {
+        Item::$format(value.0)
+      }
+    }
+    impl TryFrom<Item> for $name {
+      type Error = Error;
+
+      fn try_from(value: Item) -> Result<Self, Self::Error> {
+        match value {
+          Item::$format(vec) => {
+            $(if !$range.contains(&vec.len()) {
+              return Err(WrongFormat)
+            })?
+            Ok(Self(vec))
+          },
+          _ => Err(WrongFormat),
+        }
+      }
+    }
+    impl std::fmt::Display for $name {
+      fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", Char::chars_to_str(&self.0))
+      }
+    }
+  };
+  // General case (with optional range and type)
   (
     $name:ident,
     $format:ident

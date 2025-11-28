@@ -33,7 +33,7 @@ fn main() {
 
 fn test_data() {
   println!("{:?}", Item::try_from(vec![1, 1, 177, 4, 0, 0, 7, 237]));
-  let a: semi_e5::items::ErrorText = semi_e5::items::ErrorText::new(str_to_chars("A").unwrap()).unwrap();
+  let a: semi_e5::items::ErrorText = semi_e5::items::ErrorText::new(Char::str_to_chars("A").unwrap()).unwrap();
   println!("{:?}", a);
   println!("{:?}", a.read()[0])
 }
@@ -62,8 +62,8 @@ fn test_equipment() {
               match s1::AreYouThere::try_from(request) {
                 Ok(_) => {
                   s1::OnLineDataEquipment((
-                    ModelName::new(str_to_chars("SEMI-RS").unwrap()).unwrap(),
-                    SoftwareRevision::new(str_to_chars("010").unwrap()).unwrap(),
+                    ModelName::new(Char::str_to_chars("SEMI-RS").unwrap()).unwrap(),
+                    SoftwareRevision::new(Char::str_to_chars("010").unwrap()).unwrap(),
                   )).into()
                 },
                 Err(_) => s1::Abort.into(),
@@ -98,8 +98,8 @@ fn test_equipment() {
                 Ok(_s1f13) => {
                   s1::EquipmentCRA((
                     CommAck::Accepted, (
-                      ModelName::new(str_to_chars("SEMI-RS").unwrap()).unwrap(),
-                      SoftwareRevision::new(str_to_chars("010").unwrap()).unwrap(),
+                      ModelName::new(Char::str_to_chars("SEMI-RS").unwrap()).unwrap(),
+                      SoftwareRevision::new(Char::str_to_chars("010").unwrap()).unwrap(),
                     )
                   )).into()
                 },
