@@ -133,6 +133,7 @@ impl Char {
 /// 
 /// [Item]: crate::Item
 /// [List]: crate::Item::List
+#[derive(Clone, Debug)]
 pub struct OptionItem<T>(pub Option<T>);
 
 /// ## ITEM -> OPTIONAL ITEM
@@ -162,9 +163,10 @@ impl<A: Into<Item>> From<OptionItem<A>> for Item {
 }
 
 /// ## VECTORIZED LIST
-/// 
+///
 /// Represents a List with a variable number of elements of homogeneous
 /// structure. The intent is that type T will be a specific item.
+#[derive(Clone, Debug)]
 pub struct VecList<T>(pub Vec<T>);
 
 /// ## ITEM -> VECTORIZED LIST
@@ -193,6 +195,13 @@ impl<A: Into<Item>> From<VecList<A>> for Item {
       vec.push(item.into())
     }
     Item::List(vec)
+  }
+}
+
+/// ## VECTORIZED LIST -> VEC<ITEM>
+impl<A: Into<Item>> From<VecList<A>> for Vec<Item> {
+  fn from(vec_list: VecList<A>) -> Self {
+    vec_list.0.into_iter().map(|item| item.into()).collect()
   }
 }
 
@@ -2227,6 +2236,7 @@ multiformat_vec!{EquipmentConstantMinimumValue, Bin, Bool, Ascii, Jis8, I1, I2, 
 /// - [S2F30]
 /// 
 /// [S2F30]: crate::messages::s2::EquipmentConstantNamelist
+#[derive(Clone, Debug)]
 pub struct EquipmentConstantName(pub Vec<Char>);
 singleformat_vec!{EquipmentConstantName, Ascii}
 
@@ -2711,6 +2721,7 @@ multiformat_vec!{LimitMinimum, Bool, Ascii, I1, I2, I4, I8, U1, U2, U4, U8, F4, 
 /// - S3F2
 /// 
 /// [S2F27]: crate::messages::s2::InitiateProcessingRequest
+#[derive(Clone, Copy, Debug)]
 pub struct LocationCode(pub u8);
 singleformat!{LocationCode, Bin}
 
@@ -2928,6 +2939,7 @@ multiformat_ascii!{ObjectID, U1, U2, U4, U8}
 /// - S15F7, S15F23, S15F43, S15F47
 /// 
 /// [S2F49]: crate::messages::s2::EnhancedRemoteCommand
+#[derive(Clone, Debug)]
 pub struct ObjectSpecifier(pub Vec<Char>);
 singleformat_vec!{ObjectSpecifier, Ascii}
 
@@ -3656,6 +3668,7 @@ singleformat_enum!{TransferStatusOutputPort, Bin}
 /// [S1F22]: crate::messages::s1::DataVariableNamelist
 /// [S2F30]: crate::messages::s2::EquipmentConstantNamelist
 /// [S2F38]: crate::messages::s2::EnableDisableEventReportAcknowledge
+#[derive(Clone, Debug)]
 pub struct Units(pub Vec<Char>);
 singleformat_vec!{Units, Ascii}
 
