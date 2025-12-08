@@ -2213,6 +2213,38 @@ pub enum EquipmentConstantID {
 }
 multiformat_ascii!{EquipmentConstantID, I1, I2, I4, I8, U1, U2, U4, U8}
 
+impl From<EquipmentConstantID> for VariableID {
+  fn from(ec_id: EquipmentConstantID) -> Self {
+    match ec_id {
+      EquipmentConstantID::Ascii(v) => VariableID::Ascii(v),
+      EquipmentConstantID::I1(v) => VariableID::I1(v),
+      EquipmentConstantID::I2(v) => VariableID::I2(v),
+      EquipmentConstantID::I4(v) => VariableID::I4(v),
+      EquipmentConstantID::I8(v) => VariableID::I8(v),
+      EquipmentConstantID::U1(v) => VariableID::U1(v),
+      EquipmentConstantID::U2(v) => VariableID::U2(v),
+      EquipmentConstantID::U4(v) => VariableID::U4(v),
+      EquipmentConstantID::U8(v) => VariableID::U8(v),
+    }
+  }
+}
+
+impl From<VariableID> for EquipmentConstantID {
+  fn from(var_id: VariableID) -> Self {
+    match var_id {
+      VariableID::Ascii(v) => EquipmentConstantID::Ascii(v),
+      VariableID::I1(v) => EquipmentConstantID::I1(v),
+      VariableID::I2(v) => EquipmentConstantID::I2(v),
+      VariableID::I4(v) => EquipmentConstantID::I4(v),
+      VariableID::I8(v) => EquipmentConstantID::I8(v),
+      VariableID::U1(v) => EquipmentConstantID::U1(v),
+      VariableID::U2(v) => EquipmentConstantID::U2(v),
+      VariableID::U4(v) => EquipmentConstantID::U4(v),
+      VariableID::U8(v) => EquipmentConstantID::U8(v),
+    }
+  }
+}
+
 /// ## ECMAX
 /// 
 /// Equipment constant maximum value.
@@ -3428,24 +3460,23 @@ pub enum StatusVariableValue {
 multiformat_vec!{StatusVariableValue, List, Bin, Bool, Ascii, Jis8, I1, I2, I4, I8, U1, U2, U4, U8, F4, F8}
 
 /// ## SVID
-/// 
+///
 /// Status variable ID.
-/// 
-/// TODO: Add ASCII.
-/// 
+///
 /// -------------------------------------------------------------------------
-/// 
+///
 /// #### Used By
-/// 
+///
 /// - [S1F3], [S1F11], [S1F12]
 /// - [S2F23]
-/// 
+///
 /// [S1F3]:  crate::messages::s1::SelectedEquipmentStatusRequest
 /// [S1F11]: crate::messages::s1::StatusVariableNamelistRequest
 /// [S1F12]: crate::messages::s1::StatusVariableNamelistReply
 /// [S2F23]: crate::messages::s2::TraceInitializeSend
-#[derive(Clone, Copy, Debug, Eq, PartialEq, Hash)]
+#[derive(Clone, Debug, Eq, PartialEq, Hash)]
 pub enum StatusVariableID {
+  Ascii(Vec<Char>),
   I1(i8),
   I2(i16),
   I4(i32),
@@ -3455,7 +3486,39 @@ pub enum StatusVariableID {
   U4(u32),
   U8(u64),
 }
-multiformat!{StatusVariableID, I1, I2, I4, I8, U1, U2, U4, U8}
+multiformat_ascii!{StatusVariableID, I1, I2, I4, I8, U1, U2, U4, U8}
+
+impl From<StatusVariableID> for VariableID {
+  fn from(sv_id: StatusVariableID) -> Self {
+    match sv_id {
+      StatusVariableID::Ascii(v) => VariableID::Ascii(v),
+      StatusVariableID::I1(v) => VariableID::I1(v),
+      StatusVariableID::I2(v) => VariableID::I2(v),
+      StatusVariableID::I4(v) => VariableID::I4(v),
+      StatusVariableID::I8(v) => VariableID::I8(v),
+      StatusVariableID::U1(v) => VariableID::U1(v),
+      StatusVariableID::U2(v) => VariableID::U2(v),
+      StatusVariableID::U4(v) => VariableID::U4(v),
+      StatusVariableID::U8(v) => VariableID::U8(v),
+    }
+  }
+}
+
+impl From<VariableID> for StatusVariableID {
+  fn from(var_id: VariableID) -> Self {
+    match var_id {
+      VariableID::Ascii(v) => StatusVariableID::Ascii(v),
+      VariableID::I1(v) => StatusVariableID::I1(v),
+      VariableID::I2(v) => StatusVariableID::I2(v),
+      VariableID::I4(v) => StatusVariableID::I4(v),
+      VariableID::I8(v) => StatusVariableID::I8(v),
+      VariableID::U1(v) => StatusVariableID::U1(v),
+      VariableID::U2(v) => StatusVariableID::U2(v),
+      VariableID::U4(v) => StatusVariableID::U4(v),
+      VariableID::U8(v) => StatusVariableID::U8(v),
+    }
+  }
+}
 
 /// ## SVNAME
 /// 
