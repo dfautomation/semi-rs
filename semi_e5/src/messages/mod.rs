@@ -233,70 +233,8 @@ pub mod s3 {}
 /// [Message]: crate::Message
 pub mod s4 {}
 
-/// # STREAM 5: EXCEPTION HANDLING
-/// **Based on SEMI E5§10.9**
-/// 
-/// ---------------------------------------------------------------------------
-/// 
-/// [Message]s which deal with binary and analog equipment exceptions.
-/// 
-/// Exceptions are classified into two categories: Errors and Alarms
-/// 
-/// ---------------------------------------------------------------------------
-/// 
-/// [Message]s S5F1 through S5F8 provide basic alarm messages, which may
-/// be divided into the following categories:
-/// 
-/// - Personal Safety - Condition may be dangerous to people.
-/// - Equipment Safety - Condition may harm equipment.
-/// - Parameter Control Warning - Parameter variation outside of preset
-///   limits - may harm product.
-/// - Parameter Control Error - Parameter variation outside of reasonable
-///   control limits - may indicate an equipment malfunction.
-/// - Irrecoverable Error - Intervention required before normal use of
-///   equipment can resume.
-/// - Equipment Status Warning - An unexpected condition has occurred, but
-///   operation can continue.
-/// - Attention Flags - A signal from a process program indicating that a
-///   particular step has been reached.
-/// - Data Integrity - A condition which may cause loss of data; usually
-///   related to [Stream 6].
-/// 
-/// It will be the equipment's responsibility to categorize alarms.
-/// 
-/// Some alarm conditions may cause more than one type of alarm to be issued.
-/// 
-/// ---------------------------------------------------------------------------
-/// 
-/// [Message]s S5F9 through S5F15 provide extended capabilities for
-/// exception handling.
-/// 
-/// ---------------------------------------------------------------------------
-/// 
-/// ## TO BE DONE
-/// 
-/// - Fill out stream contents
-/// 
-/// [Message]: crate::Message
-/// [Stream 6]: crate::messages::s6
-pub mod s5 {}
-
-/// # STREAM 6: DATA COLLECTION
-/// **Based on SEMI E5§10.10**
-/// 
-/// ---------------------------------------------------------------------------
-/// 
-/// [Message]s which deal with in-process measurement and equipment
-/// monitoring.
-/// 
-/// ---------------------------------------------------------------------------
-/// 
-/// ## TO BE DONE
-/// 
-/// - Fill out stream contents
-/// 
-/// [Message]: crate::Message
-pub mod s6 {}
+pub mod s5;
+pub mod s6;
 
 /// # STREAM 7: PROCESS PROGRAM MANAGEMENT
 /// **Based on SEMI E5§10.11**

@@ -169,6 +169,19 @@ impl<A: Into<Item>> From<OptionItem<A>> for Item {
 #[derive(Clone, Debug)]
 pub struct VecList<T>(pub Vec<T>);
 
+/// ## ITEM -> VECTORIZED LIST (special case for VecList<Item>)
+/// When the element type is Item itself, no conversion is needed
+impl TryFrom<Item> for VecList<Item> {
+  type Error = Error;
+
+  fn try_from(item: Item) -> Result<Self, Self::Error> {
+    match item {
+      Item::List(list) => Ok(Self(list)),
+      _ => Err(Error::WrongFormat),
+    }
+  }
+}
+
 /// ## ITEM -> VECTORIZED LIST
 impl<A: TryFrom<Item, Error = Error> + Sized> TryFrom<Item> for VecList<A> {
   type Error = Error;
@@ -1016,11 +1029,53 @@ singleformat!{AcknowledgeAny, Bool}
 // TODO: ACKC3
 // How to deal with 1-63 being reserved but the rest being open for user values?
 
-// TODO: ACKC5
-// How to deal with 1-63 being reserved but the rest being open for user values?
+/// ## ACKC5
+///
+/// Acknowledge code for Stream 5.
+///
+/// -------------------------------------------------------------------------
+///
+/// #### Values
+///
+/// - 0 = Accepted
+/// - 1 = Error, Not Accepted
+///
+/// -------------------------------------------------------------------------
+///
+/// #### Used By
+///
+/// - S5F2, S5F4
+#[derive(Clone, Copy, Debug, IntoPrimitive, TryFromPrimitive)]
+#[repr(u8)]
+pub enum AcknowledgeCode5 {
+  Accepted = 0,
+  NotAccepted = 1,
+}
+singleformat_enum!{AcknowledgeCode5, Bin}
 
-// TODO: ACKC6
-// How to deal with 1-63 being reserved but the rest being open for user values?
+/// ## ACKC6
+///
+/// Acknowledge code for Stream 6.
+///
+/// -------------------------------------------------------------------------
+///
+/// #### Values
+///
+/// - 0 = Accepted
+/// - 1 = Error, Not Accepted
+///
+/// -------------------------------------------------------------------------
+///
+/// #### Used By
+///
+/// - S6F12
+#[derive(Clone, Copy, Debug, IntoPrimitive, TryFromPrimitive)]
+#[repr(u8)]
+pub enum AcknowledgeCode6 {
+  Accepted = 0,
+  NotAccepted = 1,
+}
+singleformat_enum!{AcknowledgeCode6, Bin}
 
 // TODO: ACKC7
 // How to deal with 7-63 being reserved but the rest being open for user values?
@@ -3233,6 +3288,45 @@ pub enum ReportID {
   U8(u64),
 }
 multiformat_ascii!{ReportID, I1, I2, I4, I8, U1, U2, U4, U8}
+
+/// ## Report
+///
+/// A single report containing a report ID and a list of variable values.
+///
+/// -------------------------------------------------------------------------
+///
+/// #### Used By
+///
+/// - S6F11, S6F16
+#[derive(Clone, Debug)]
+pub struct Report(pub ReportID, pub VecList<Item>);
+
+impl From<Report> for Item {
+  fn from(value: Report) -> Self {
+    Item::List(vec![
+      value.0.into(),
+      value.1.into(),
+    ])
+  }
+}
+
+impl TryFrom<Item> for Report {
+  type Error = Error;
+
+  fn try_from(item: Item) -> Result<Self, Self::Error> {
+    match item {
+      Item::List(mut vec) => {
+        if vec.len() != 2 {
+          return Err(WrongFormat);
+        }
+        let variables = vec.pop().unwrap().try_into()?;
+        let report_id = vec.pop().unwrap().try_into()?;
+        Ok(Report(report_id, variables))
+      },
+      _ => Err(WrongFormat),
+    }
+  }
+}
 
 /// ## RSPACK
 /// 
