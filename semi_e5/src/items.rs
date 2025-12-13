@@ -1896,7 +1896,7 @@ singleformat_enum!{CommandParameterAcknowledgeCode, Bin}
 /// [S2F42]: crate::messages::s2::HostCommandAcknowledge
 /// [S2F49]: crate::messages::s2::EnhancedRemoteCommand
 /// [S2F50]: crate::messages::s2::EnhancedRemoteCommandAcknowledge
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Eq, PartialEq, Hash)]
 pub enum CommandParameterName {
   Ascii(Vec<Char>),
   I1(Vec<i8>),
@@ -1925,7 +1925,7 @@ multiformat_vec!{CommandParameterName, Ascii, I1, I2, I4, I8, U1, U2, U4, U8}
 /// 
 /// [S2F41]: crate::messages::s2::HostCommandSend
 /// [S2F49]: crate::messages::s2::EnhancedRemoteCommand
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Eq, PartialEq, Hash)]
 pub enum CommandParameterValue {
   Bin(Vec<u8>),
   Bool(Vec<bool>),
@@ -1941,6 +1941,25 @@ pub enum CommandParameterValue {
   U8(Vec<u64>),
 }
 multiformat_vec!{CommandParameterValue, Bin, Bool, Ascii, Jis8, I1, I2, I4, I8, U1, U2, U4, U8}
+
+impl From<CommandParameterValue> for CommandEnhancedParameterValue {
+  fn from(value: CommandParameterValue) -> Self {
+    match value {
+      CommandParameterValue::Bin(v) => CommandEnhancedParameterValue::Bin(v),
+      CommandParameterValue::Bool(v) => CommandEnhancedParameterValue::Bool(v),
+      CommandParameterValue::Ascii(v) => CommandEnhancedParameterValue::Ascii(v),
+      CommandParameterValue::Jis8(v) => CommandEnhancedParameterValue::Jis8(v),
+      CommandParameterValue::I1(v) => CommandEnhancedParameterValue::I1(v),
+      CommandParameterValue::I2(v) => CommandEnhancedParameterValue::I2(v),
+      CommandParameterValue::I4(v) => CommandEnhancedParameterValue::I4(v),
+      CommandParameterValue::I8(v) => CommandEnhancedParameterValue::I8(v),
+      CommandParameterValue::U1(v) => CommandEnhancedParameterValue::U1(v),
+      CommandParameterValue::U2(v) => CommandEnhancedParameterValue::U2(v),
+      CommandParameterValue::U4(v) => CommandEnhancedParameterValue::U4(v),
+      CommandParameterValue::U8(v) => CommandEnhancedParameterValue::U8(v),
+    }
+  }
+}
 
 /// ## CSAACK
 /// 
@@ -2823,6 +2842,7 @@ multiformat_vec!{LimitMaximum, Bool, Ascii, I1, I2, I4, I8, U1, U2, U4, U8, F4, 
 /// - [S2F48]
 /// 
 /// [S2F48]: crate::messages::s2::VariableLimitAttributeSend
+#[derive(Clone, Debug)]
 pub enum LimitMinimum {
   Bool(Vec<bool>),
   Ascii(Vec<Char>),

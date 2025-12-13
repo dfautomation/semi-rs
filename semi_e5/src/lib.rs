@@ -215,7 +215,7 @@ pub enum Error {
 /// [Vector]: Vec
 /// [String]: String
 #[repr(u8)]
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum Item {
   /// ### LIST
   /// **Based on SEMI E5§9.3**
@@ -953,7 +953,7 @@ impl TryFrom<Vec<u8>> for Item {
 /// ## LOCALIZED STRING HEADER
 /// **Based on SEMI E5§9.4**
 #[repr(u16)]
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum LocalizedStringHeader {
   //Universal
   Ucs2 = 1,
