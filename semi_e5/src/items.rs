@@ -1212,6 +1212,34 @@ pub enum AlarmID {
 }
 multiformat!{AlarmID, I1, I2, I4, I8, U1, U2, U4, U8}
 
+/// ## ALID
+/// 
+/// Alarm identification.
+/// 
+/// -------------------------------------------------------------------------
+/// 
+/// #### Used By
+/// 
+/// - S5F1, S5F3, S5F5, S5F6, S5F8
+#[derive(Clone, Debug)]
+pub enum AllAlarmID {
+  List(Vec<Item>),
+  Bin(Vec<u8>),
+  Bool(Vec<bool>),
+  Ascii(Vec<Char>),
+  I1(Vec<i8>),
+  I2(Vec<i16>),
+  I4(Vec<i32>),
+  I8(Vec<i64>),
+  U1(Vec<u8>),
+  U2(Vec<u16>),
+  U4(Vec<u32>),
+  U8(Vec<u64>),
+  F4(Vec<f32>),
+  F8(Vec<f64>),
+}
+multiformat_vec!{AllAlarmID, List, Bin, Bool, Ascii, I1, I2, I4, I8, U1, U2, U4, U8, F4, F8}
+
 /// ## ALTX
 /// 
 /// Alarm text, maximum 120 characters.

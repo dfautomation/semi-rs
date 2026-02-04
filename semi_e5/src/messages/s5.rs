@@ -185,7 +185,7 @@ message_data!{EnableDisableAlarmSend, true, 5, 3}
 /// [ALID]: AlarmID
 ///
 /// Note: User need to manually validate empty list, VecList<AlarmID> is a placeholder for now.
-pub struct EnableDisableAllAlarmSend(pub (AlarmEnableDisable, VecList<AlarmID>));
+pub struct EnableDisableAllAlarmSend(pub (AlarmEnableDisable, AllAlarmID));
 message_data!{EnableDisableAllAlarmSend, true, 5, 3}
 
 /// ## S5F4
